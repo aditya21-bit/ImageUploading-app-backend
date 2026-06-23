@@ -23,7 +23,7 @@ const upload = multer({ storage });
 app.post("/upload", upload.array("images", 5), (req, res) => {
 
   const imageUrls = req.files.map(file =>
-    `http://localhost:5000/uploads/${file.filename}`
+    `"https://imageuploading-app-backend.onrender.com"/${file.filename}`
   );
 
   res.json({
