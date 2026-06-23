@@ -6,8 +6,16 @@ const path = require("path");
 const app = express();
 
 app.use(cors());
+
+// Serve uploaded images
 app.use("/uploads", express.static("uploads"));
 
+// Test route
+app.get("/", (req, res) => {
+  res.send("Backend is running");
+});
+
+// Multer storage configuration
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "uploads/");
@@ -20,19 +28,22 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+// Upload route
 app.post("/upload", upload.array("images", 5), (req, res) => {
 
-  const imageUrls = req.files.map(file =>
-    `"https://imageuploading-app-backend.onrender.com"/${file.filename}`
+  const imageUrls = req.files.map(
+    file => `${req.protocol}://${req.get("host")}/uploads/${file.filename}`
   );
 
   res.json({
-    message: "Images uploaded successfully",
     imageUrls
   });
 
 });
 
-app.listen(5000, () => {
-  console.log("Server running on port 5000");
+// Server port
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
